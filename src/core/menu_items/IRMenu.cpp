@@ -4,7 +4,6 @@
 #include "core/utils.h"
 #include "modules/ir/TV-B-Gone.h"
 #include "modules/ir/custom_ir.h"
-blast_payload() function:
 {"PrecIR Blast", [=]() { blast_payload(sample_payload, sizeof(sample_payload)); }},
 #include "modules/ir/ir_jammer.h"
 #include "modules/ir/ir_read.h"
