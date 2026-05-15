@@ -3,10 +3,12 @@
 #include "core/settings.h"
 #include "core/utils.h"
 #include "modules/ir/TV-B-Gone.h"
-{"PrecIR Blast", [=]() { blast_payload(sample_payload, sizeof(sample_payload)); }},
 #include "modules/ir/custom_ir.h"
 #include "modules/ir/ir_jammer.h"
 #include "modules/ir/ir_read.h"
+
+extern void blast_payload(const uint8_t* payload, size_t len);
+uint8_t sample_payload[] = {0xAA, 0x55, 0x00, 0xFF}; 
 
 void IRMenu::optionsMenu() {
 #if defined(ARDUINO_M5STICK_S3)
@@ -14,7 +16,8 @@ void IRMenu::optionsMenu() {
     M5.Power.setExtOutput(true); // ENABLE 5V OUTPUT
 #endif
     options = {
-        {"TV-B-Gone", StartTvBGone              },
+        {"TV-B-Gone", StartTvBGone },
+        {"PrecIR Blast", [=]() { blast_payload(sample_payload, sizeof(sample_payload)); }},
         {"Custom IR", otherIRcodes              },
         {"IR Read",   [=]() { IrRead(); }       },
 #if !defined(LITE_VERSION)
