@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "driver/rmt.h"
-#include "hal/hal.h"
+// We removed the hal/hal.h line!
 
 #define RMT_TX_CHANNEL RMT_CHANNEL_0
 #define RMT_CLK_DIV 80 
@@ -9,10 +9,10 @@
 #define ONE_LOW_US    8
 
 void blast_payload(const uint8_t* payload, size_t len) {
-    // 1. Ask Bruce which pin the IR LED is on
-    gpio_num_t ir_pin = (gpio_num_t)HAL::getIrTxPin();
+    // Hardcode the T-Embed IR pin directly to bypass the include error
+    gpio_num_t ir_pin = GPIO_NUM_4;
 
-    // 2. Setup the RMT hardware
+    // Setup the RMT hardware
     rmt_config_t config = RMT_DEFAULT_CONFIG_TX(ir_pin, RMT_TX_CHANNEL);
     config.tx_config.carrier_en = false; 
     config.clk_div = RMT_CLK_DIV;
@@ -20,7 +20,7 @@ void blast_payload(const uint8_t* payload, size_t len) {
     ESP_ERROR_CHECK_WITHOUT_ABORT(rmt_config(&config));
     ESP_ERROR_CHECK_WITHOUT_ABORT(rmt_driver_install(config.channel, 0, 0));
 
-    // 3. Prepare the data
+    // Prepare the data
     size_t num_items = len * 8;
     rmt_item32_t* items = (rmt_item32_t*) malloc(num_items * sizeof(rmt_item32_t));
     if (!items) return;
@@ -38,12 +38,11 @@ void blast_payload(const uint8_t* payload, size_t len) {
         }
     }
 
-    // 4. Fire the laser!
+    // Fire the laser!
     rmt_write_items(RMT_TX_CHANNEL, items, num_items, true);
     rmt_wait_tx_done(RMT_TX_CHANNEL, portMAX_DELAY);
     
-    // 5. Clean up so Bruce's normal IR features still work afterwards
+    // Clean up
     free(items);
     rmt_driver_uninstall(RMT_TX_CHANNEL);
 }
-
