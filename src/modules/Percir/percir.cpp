@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "driver/rmt.h"
-// We removed the hal/hal.h line!
+// Notice we completely removed the hal/hal.h line!
 
 #define RMT_TX_CHANNEL RMT_CHANNEL_0
 #define RMT_CLK_DIV 80 
@@ -9,7 +9,7 @@
 #define ONE_LOW_US    8
 
 void blast_payload(const uint8_t* payload, size_t len) {
-    // Hardcode the T-Embed IR pin directly to bypass the include error
+    // Hardcode the T-Embed IR pin directly (Pin 4) to bypass the include error
     gpio_num_t ir_pin = GPIO_NUM_4;
 
     // Setup the RMT hardware
@@ -46,3 +46,4 @@ void blast_payload(const uint8_t* payload, size_t len) {
     free(items);
     rmt_driver_uninstall(RMT_TX_CHANNEL);
 }
+
